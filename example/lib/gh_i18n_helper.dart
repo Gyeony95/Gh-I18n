@@ -1,0 +1,95 @@
+import 'dart:convert';
+
+import 'package:example/gh_i18n_language.dart';
+import 'package:example/gh_i18n_translator.dart';
+import 'package:flutter/services.dart';
+import 'package:gh_i18n/language_type.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+/// 전역에서 사용될 수 있게 class 밖에 선언
+GhI18nLanguage get tl => TranslateHelper()._translateLanguage;
+
+class TranslateHelper {
+  static TranslateHelper? _instance;
+
+  TranslateHelper._() {
+    _instance ??= this;
+  }
+
+  factory TranslateHelper() {
+    return _instance ??= TranslateHelper._();
+  }
+
+  /// key를 통해 번역된 언어를 가져올 수 있게끔 저장 되어있음
+  late GhI18nLanguage _translateLanguage;
+
+  /// 번역 이전의 ko,en 두 데이터를 모두 가지고 있음
+  late GhI18nTranslations growTranslations;
+
+  static bool get isKo => getLanguageType() == LanguageType.ko;
+  static bool get isEn => getLanguageType() == LanguageType.en;
+
+  static const String _keyString = 'GH_I18N_KEY';
+
+  /// 언어를 init 해주는 부분, 최초 1회 호출 및 개발자전용 화면에서 언어변경시 호출
+  Future<void> initLanguage() async {
+    growTranslations = await _setTranslations();
+    _translateLanguage = await _setLanguage();
+  }
+
+  /// 설정된 언어를 가져옴
+  Future<GhI18nLanguage> _setLanguage() async {
+    LanguageType type = await getLanguageType();
+    if (type == LanguageType.en) {
+      return _translateLanguage = growTranslations.enEu;
+    } else {
+      return _translateLanguage = growTranslations.koKr;
+    }
+  }
+
+  /// main.dart에서 init 되는 [Languages] 클래스를 생성함
+  Future<GhI18nTranslations> _setTranslations() async {
+    return GhI18nTranslations(
+      koKr: await _modelFromPath('assets/json/translate_kr.json'),
+      enEu: await _modelFromPath('assets/json/translate_en.json'),
+    );
+  }
+
+  /// path로 부터 json을 가져와 모델로 파싱해주는 부분
+  Future<GhI18nLanguage> _modelFromPath(String path) async {
+    final jsonString = await rootBundle.loadString(path);
+    Map<String, dynamic> _jsonData = json.decode(jsonString);
+    return GhI18nLanguage.fromJson(_jsonData);
+  }
+
+  static Future<LanguageType> getLanguageType() async {
+    LanguageType defaultType = LanguageType.ko;
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var lang = prefs.getString(_keyString) ?? '';
+    for (LanguageType type in LanguageType.values) {
+      if (type.enText == lang) {
+        return type;
+      }
+    }
+    return defaultType;
+  }
+
+  static Future<void> setLanguageType(LanguageType languageType) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString(_keyString, languageType.enText);
+    TranslateHelper().initLanguage();
+  }
+}
+
+extension TrStringExtension on String {
+  /// trParams 대신 이거 사용
+  String params([Map<String, String> params = const {}]) {
+    var trans = this;
+    if (params.isNotEmpty) {
+      params.forEach((key, value) {
+        trans = trans.replaceAll('@$key', value);
+      });
+    }
+    return trans;
+  }
+}
