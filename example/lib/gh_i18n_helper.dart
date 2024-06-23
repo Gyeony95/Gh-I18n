@@ -67,7 +67,7 @@ class TranslateHelper {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var lang = prefs.getString(_keyString) ?? '';
     for (LanguageType type in LanguageType.values) {
-      if (type.enText == lang) {
+      if (type.text == lang) {
         return type;
       }
     }
@@ -76,7 +76,7 @@ class TranslateHelper {
 
   static Future<void> setLanguageType(LanguageType languageType) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString(_keyString, languageType.enText);
+    prefs.setString(_keyString, languageType.text);
     TranslateHelper().initLanguage();
   }
 }
