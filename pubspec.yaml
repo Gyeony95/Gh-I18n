@@ -1,7 +1,7 @@
 name: gh_i18n
-description: "A new Flutter package project."
-version: 0.0.1
-homepage:
+description: "This is an easy plugin to implement i18n functions in flutter."
+version: 1.0.0
+homepage: https://github.com/Gyeony95/Gh-I18n
 
 environment:
   sdk: '>=3.2.4 <4.0.0'
@@ -21,10 +21,6 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^2.0.0
 
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-
-# The following section is specific to Flutter packages.
 flutter:
 
   # To add assets to your package, add an assets section, like this:
