@@ -3,28 +3,34 @@ import 'dart:io';
 
 import 'package:gh_i18n/src/model_generator.dart';
 import "package:path/path.dart" show join, normalize;
+import 'package:yaml/yaml.dart';
 
-void main(List<String> arguments){
-  if (arguments.isEmpty || arguments.length < 5) {
-    _alertMessage();
-    return;
+
+class GhParser {
+  void startParse(){
+    var config = loadYaml(File('gh_i18n.yaml').readAsStringSync());
+
+    if (config.isEmpty) {
+      _alertMessage();
+      return;
+    }
+    print(config);
+    final createClassPath = config['classPath']; // ./lib/src/
+    final createModelNm = config['modelNm']; // GhI18nLanguage
+    final createClassNm = config['fileNm']; // grow_language
+    final jsonPath = config['jsonPath']; // ./bin/
+    final jsonNm = config['jsonNm']; // sample
+
+
+    final classGenerator = ModelGenerator(createModelNm);
+    final filePath = normalize(join(jsonPath, '$jsonNm.json'));
+    final jsonRawData = File(filePath).readAsStringSync();
+    String dartCode = classGenerator.generateDartClasses(jsonRawData);
+
+    final newFilePath = join(createClassPath, '$createClassNm.dart');
+    final newFile = File(newFilePath);
+    newFile.writeAsStringSync(dartCode);
   }
-  print(arguments);
-  final createClassPath = arguments[0]; // ./lib/src/
-  final createModelNm = arguments[1]; // GhI18nLanguage
-  final createClassNm = arguments[2]; // grow_language
-  final jsonPath = arguments[3]; // ./bin/
-  final jsonNm = arguments[4]; // sample
-
-
-  final classGenerator = ModelGenerator(createModelNm);
-  final filePath = normalize(join(jsonPath, '$jsonNm.json'));
-  final jsonRawData = File(filePath).readAsStringSync();
-  String dartCode = classGenerator.generateDartClasses(jsonRawData);
-
-  final newFilePath = join(createClassPath, '$createClassNm.dart');
-  final newFile = File(newFilePath);
-  newFile.writeAsStringSync(dartCode);
 }
 
 
