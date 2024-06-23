@@ -84,7 +84,6 @@ class GhTranslatorHelper {
 }
 
 extension TrStringExtension on String {
-  /// trParams 대신 이거 사용
   String params([Map<String, String> params = const {}]) {
     var trans = this;
     if (params.isNotEmpty) {
