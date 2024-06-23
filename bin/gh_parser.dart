@@ -1,13 +1,18 @@
-
 import 'dart:io';
 
 import 'package:gh_i18n/src/model_generator.dart';
 import "package:path/path.dart" show join, normalize;
 import 'package:yaml/yaml.dart';
 
-
 class GhParser {
-  void startParse(){
+
+  late String classPath;
+  late String modelNm;
+  late String fileNm;
+  late String jsonPath;
+  late String jsonNm;
+
+  void startParse() {
     var config = loadYaml(File('gh_i18n.yaml').readAsStringSync());
 
     if (config.isEmpty) {
@@ -15,25 +20,58 @@ class GhParser {
       return;
     }
     print(config);
-    final createClassPath = config['classPath']; // ./lib/src/
-    final createModelNm = config['modelNm']; // GhI18nLanguage
-    final createClassNm = config['fileNm']; // grow_language
-    final jsonPath = config['jsonPath']; // ./bin/
-    final jsonNm = config['jsonNm']; // sample
+    classPath = config['classPath']; // ./lib/src/
+    modelNm = config['modelNm']; // GhI18nLanguage
+    fileNm = config['fileNm']; // grow_language
+    jsonPath = config['jsonPath']; // ./bin/
+    jsonNm = config['jsonNm']; // sample
+    _createJsonFile();
+    _createTranslatorFile();
 
+  }
 
-    final classGenerator = ModelGenerator(createModelNm);
+  void _createJsonFile(){
     final filePath = normalize(join(jsonPath, '$jsonNm.json'));
     final jsonRawData = File(filePath).readAsStringSync();
+    final classGenerator = ModelGenerator(modelNm);
     String dartCode = classGenerator.generateDartClasses(jsonRawData);
 
-    final newFilePath = join(createClassPath, '$createClassNm.dart');
-    final newFile = File(newFilePath);
-    newFile.writeAsStringSync(dartCode);
+    final newFilePath = join(classPath, '$fileNm.dart');
+    // json 파일 생성
+    _makeNewFile(path: newFilePath, code: dartCode);
+  }
+
+  void _createTranslatorFile(){
+    String code = _getTranslatorString();
+    final newFilePath = join(classPath, 'gh_i18n_translator.dart');
+    _makeNewFile(path: newFilePath, code: code);
+  }
+
+  void _makeNewFile({
+    required String path,
+    required String code,
+  }) {
+    final newFile = File(path);
+    newFile.writeAsStringSync(code);
+  }
+
+  String _getTranslatorString() {
+    return
+      '''
+import '$fileNm.dart';
+
+class GhI18nTranslations {
+  final GhI18nLanguage koKr;
+  final GhI18nLanguage enEu;
+
+  GhI18nTranslations({
+    required this.koKr,
+    required this.enEu,
+  });
+}
+    ''';
   }
 }
-
-
 
 void _alertMessage() {
   print('경로가 올바르지 않습니다.');

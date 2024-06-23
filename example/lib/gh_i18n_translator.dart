@@ -1,4 +1,4 @@
-import 'package:example/gh_i18n_language.dart';
+import 'gh_i18n_language.dart';
 
 class GhI18nTranslations {
   final GhI18nLanguage koKr;
@@ -8,11 +8,5 @@ class GhI18nTranslations {
     required this.koKr,
     required this.enEu,
   });
-
-  Map<String, Map<String, dynamic>> toTranslationKeys() {
-    return {
-      'ko_KR': koKr.toJson(),
-      'en_US': enEu.toJson(),
-    };
-  }
 }
+    
