@@ -15,6 +15,7 @@ dependencies:
   dart_style: ^2.2.1
   json_ast: ^1.0.6
   yaml: ^3.1.2
+  path: ^1.8.3
 
 dev_dependencies:
   flutter_test:

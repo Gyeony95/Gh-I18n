@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:gh_i18n/src/model_generator.dart';
-import "package:path/path.dart" show join, normalize;
+import 'package:path/path.dart' show join, normalize;
 import 'package:yaml/yaml.dart';
 
 class GhParser {
