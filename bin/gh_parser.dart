@@ -22,7 +22,7 @@ class GhParser {
     print(config);
     classPath = config['classPath']; // ./lib/src/
     modelNm = config['modelNm']; // GhI18nLanguage
-    fileNm = config['fileNm']; // grow_language
+    fileNm = config['fileNm']; // gh_i18n_language
     jsonPath = config['jsonPath']; // ./bin/
     jsonNm = config['jsonNm']; // sample
     _createJsonFile();
