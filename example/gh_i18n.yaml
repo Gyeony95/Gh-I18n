@@ -1,0 +1,5 @@
+classPath: "./lib/src/"
+modelNm: "GhI18nLanguage"
+fileNm: "gh_i18n_language"
+jsonPath: "./bin/"
+jsonNm: "i18n_json"
