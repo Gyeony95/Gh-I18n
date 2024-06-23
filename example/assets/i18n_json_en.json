@@ -1,6 +1,7 @@
 {
   "home" : {
     "count": "Count @n",
-    "btn_text": "Add Count"
+    "btn_text": "Add Count",
+    "text": "You have pushed the button this many times:"
   }
 }

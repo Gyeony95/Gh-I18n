@@ -1,6 +1,12 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 
-void main() {
+import 'package:example/gh_i18n_helper.dart';
+import 'package:flutter/material.dart';
+import 'package:gh_i18n/language_type.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await GhTranslatorHelper().initLanguage();
   runApp(const MyApp());
 }
 
@@ -29,7 +35,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-
+  bool isKr = true;
   void _incrementCounter() {
     setState(() {
       _counter++;
@@ -47,13 +53,30 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
+            Text(
+              tl.home?.text ?? '',
             ),
             Text(
-              '$_counter',
+              tl.home?.count?.params({'n': '$_counter'}) ?? '',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            const SizedBox(height: 100),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('en'),
+                Switch(value: isKr, onChanged: (value){
+                  isKr = value;
+                  if(isKr){
+                    GhTranslatorHelper.setLanguageType(LanguageType.ko);
+                  } else{
+                    GhTranslatorHelper.setLanguageType(LanguageType.en);
+                  }
+                  setState(() {});
+                }),
+                const Text('kr'),
+              ],
+            )
           ],
         ),
       ),
